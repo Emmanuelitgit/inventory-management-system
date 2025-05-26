@@ -13,6 +13,8 @@ import java.util.List;
 public class VendorService {
 
     private final VendorRepo vendorRepo;
+    private final List<Object> vendors = new ArrayList<>();
+    private final HashMap<String, String> vendorHashMap = new HashMap<>();
 
     @Autowired
     public VendorService(VendorRepo vendorRepo) {
@@ -21,11 +23,12 @@ public class VendorService {
 
     // adding new inventory record with hashmap
     public Vendor vendor(Vendor vendor){
-        HashMap<String, String> vendorHashMap = new HashMap<>();
         vendorHashMap.put("name", vendor.getName());
         vendorHashMap.put("email", vendor.getEmail());
         vendorHashMap.put("zipCode", vendor.getZipCode());
         vendorHashMap.put("address", vendor.getAddress());
+
+        vendors.add(vendorHashMap);
         vendorRepo.save(vendor);
         return vendor;
     }
@@ -36,10 +39,7 @@ public class VendorService {
         // data from database
         List<Vendor> vendorsData = vendorRepo.findAll();
 
-        // storing list of hashmaps
-        List<Object> vendors = new ArrayList<>();
-        HashMap<String, String> vendorHashMap = new HashMap<>();
-
+        // storing in hashmaps inside a list
         for (Vendor vendor:vendorsData){
             vendorHashMap.put("name", vendor.getName());
             vendorHashMap.put("email", vendor.getEmail());

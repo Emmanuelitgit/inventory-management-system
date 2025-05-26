@@ -26,4 +26,8 @@ public class ItemCategoryService {
         }
         return itemCategory.get().getName();
     }
+
+    public ItemCategory saveCategory(ItemCategory itemCategory){
+        return itemCategoryRepo.save(itemCategory);
+    }
 }

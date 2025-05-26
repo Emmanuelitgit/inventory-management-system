@@ -13,12 +13,12 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ItemPayload {
+public class InventoryResponse {
     private UUID id;
     private String name;
     private float unitPrice;
     private float sellingPrice;
     private float grossPrice;
     private String category;
-    private UUID categoryId;
+    private String vendor;
 }

@@ -1,7 +1,7 @@
 package inventory_management.rest;
 
-import inventory_management.dto.ItemPayload;
-import inventory_management.models.Item;
+import inventory_management.dto.InventoryResponse;
+import inventory_management.models.Inventory;
 import inventory_management.models.ItemCategory;
 import inventory_management.service.InventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/inventory")
@@ -24,7 +22,7 @@ public class InventoryRest {
     }
 
     @PostMapping
-    public ResponseEntity<Object> addItem(@RequestBody ItemPayload item) {
+    public ResponseEntity<Object> addItem(@RequestBody Inventory item) {
         inventoryService.addItem(item);
         if (item == null ){
             return new ResponseEntity<>("payload cannot be null", HttpStatusCode.valueOf(400));

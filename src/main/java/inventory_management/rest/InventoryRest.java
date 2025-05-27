@@ -24,7 +24,7 @@ public class InventoryRest {
     }
 
     @PostMapping
-    public ResponseEntity<Object> addItem(@RequestBody Inventory item) {
+    public ResponseEntity<Object> saveItem(@RequestBody Inventory item) {
         inventoryService.addItem(item);
         if (item == null ){
             return new ResponseEntity<>("payload cannot be null", HttpStatusCode.valueOf(400));
@@ -33,7 +33,7 @@ public class InventoryRest {
         return new ResponseEntity<>(responseDTO,HttpStatus.valueOf(200));    }
 
     @GetMapping
-    public ResponseEntity<ResponseDTO> getItems(){
+    public ResponseEntity<ResponseDTO> findAll(){
         ResponseDTO responseDTO = AppUtils.getResponseDto("Inventory records", HttpStatus.OK, inventoryService.getItems(true));
         return new ResponseEntity<>(responseDTO,HttpStatus.valueOf(200));
     }

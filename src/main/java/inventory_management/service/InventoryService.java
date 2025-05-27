@@ -76,14 +76,7 @@ public class InventoryService {
         }
 
         // save data to database
-        Inventory inventoryData = Inventory
-                .builder()
-                .grossPrice(inventoryResponse.getGrossPrice())
-                .name(item.getName())
-                .buyingPrice(inventoryResponse.getUnitPrice())
-                .sellingPrice(inventoryResponse.getSellingPrice())
-                .build();
-        itemRepo.save(inventoryData);
+        itemRepo.save(item);
     }
 
     /**

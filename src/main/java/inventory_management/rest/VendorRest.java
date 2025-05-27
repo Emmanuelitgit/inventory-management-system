@@ -1,9 +1,43 @@
 package inventory_management.rest;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import inventory_management.dto.ResponseDTO;
+import inventory_management.models.Vendor;
+import inventory_management.service.VendorService;
+import inventory_management.utils.AppUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/vendors")
 public class VendorRest {
+
+    private final VendorService vendorService;
+
+    @Autowired
+    public VendorRest(VendorService vendorService) {
+        this.vendorService = vendorService;
+    }
+
+    @GetMapping
+    public ResponseEntity<Object> findAl(){
+        List<Object> vendors = vendorService.getVendors(true);
+        ResponseDTO responseDTO = AppUtils.getResponseDto("Vendors records", HttpStatus.OK, vendors);
+        return new ResponseEntity<>(responseDTO,HttpStatus.valueOf(200));    }
+
+    @PostMapping
+    public ResponseEntity<Object> saveVendor(@RequestBody Vendor vendor){
+        Vendor vendorRes = vendorService.saveVendor(vendor);
+        ResponseDTO responseDTO = AppUtils.getResponseDto("Vendor record saved", HttpStatus.OK, vendorRes);
+        return new ResponseEntity<>(responseDTO,HttpStatus.valueOf(201));    }
+
+    @PutMapping
+    public ResponseEntity<Object> updateVendor(@RequestBody Vendor vendor){
+        Vendor vendorRes = vendorService.updateVendor(vendor);
+        ResponseDTO responseDTO = AppUtils.getResponseDto("Vendor record saved", HttpStatus.OK, vendorRes);
+        return new ResponseEntity<>(responseDTO,HttpStatus.valueOf(201));    }
 }

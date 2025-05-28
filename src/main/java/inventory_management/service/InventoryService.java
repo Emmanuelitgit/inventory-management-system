@@ -5,7 +5,6 @@ import inventory_management.models.Inventory;
 import inventory_management.models.ItemCategory;
 import inventory_management.models.Vendor;
 import inventory_management.repo.InventoryRepo;
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,7 +28,7 @@ public class InventoryService {
     private final VendorService vendorService;
 
     @Autowired
-    public InventoryService(InventoryRepo inventoryRepo, ItemCategoryService itemCategoryService, VendorService vendorService) {
+    public InventoryService( InventoryRepo inventoryRepo, ItemCategoryService itemCategoryService, VendorService vendorService) {
         this.inventoryRepo = inventoryRepo;
         this.itemCategoryService = itemCategoryService;
         this.vendorService = vendorService;
@@ -41,7 +40,6 @@ public class InventoryService {
      * @param item
      * @date 26, May 2025
      */
-    @Transactional
     public void addItem(Inventory item) {
 
         String category = itemCategoryService.getCategoryById(item.getCategoryId());
@@ -77,9 +75,15 @@ public class InventoryService {
                 break;
         }
 
-        log.info("Data:->>>>>{}", inventoryRepo.save(item));
         // save data to database
-        inventoryRepo.save(item);
+        Inventory inventoryData = Inventory
+                .builder()
+                .grossPrice(inventoryResponse.getGrossPrice())
+                .name(item.getName())
+                .buyingPrice(inventoryResponse.getUnitPrice())
+                .sellingPrice(inventoryResponse.getSellingPrice())
+                .build();
+        inventoryRepo.save(inventoryData);
     }
 
     /**

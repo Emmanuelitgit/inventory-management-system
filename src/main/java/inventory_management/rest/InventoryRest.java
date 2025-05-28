@@ -48,7 +48,7 @@ public class InventoryRest {
         if (item == null ){
             return new ResponseEntity<>("payload cannot be null", HttpStatusCode.valueOf(400));
         }
-        ResponseDTO responseDTO = AppUtils.getResponseDto("Inventory created successfully", HttpStatus.CREATED);
+        ResponseDTO responseDTO = AppUtils.getResponseDto("Inventory updated successfully", HttpStatus.CREATED);
         return new ResponseEntity<>(responseDTO,HttpStatus.valueOf(200));    }
 
 }

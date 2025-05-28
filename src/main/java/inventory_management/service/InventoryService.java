@@ -1,10 +1,12 @@
 package inventory_management.service;
 
 import inventory_management.dto.InventoryResponse;
+import inventory_management.exception.NotFoundException;
 import inventory_management.models.Inventory;
 import inventory_management.models.ItemCategory;
 import inventory_management.models.Vendor;
 import inventory_management.repo.InventoryRepo;
+import inventory_management.repo.ItemCategoryRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,19 +28,22 @@ public class InventoryService {
     private final InventoryRepo inventoryRepo;
     private final ItemCategoryService itemCategoryService;
     private final VendorService vendorService;
+    private final ItemCategoryRepo itemCategoryRepo;
 
     @Autowired
-    public InventoryService( InventoryRepo inventoryRepo, ItemCategoryService itemCategoryService, VendorService vendorService) {
+    public InventoryService(InventoryRepo inventoryRepo, ItemCategoryService itemCategoryService, VendorService vendorService, ItemCategoryRepo itemCategoryRepo) {
         this.inventoryRepo = inventoryRepo;
         this.itemCategoryService = itemCategoryService;
         this.vendorService = vendorService;
+        this.itemCategoryRepo = itemCategoryRepo;
     }
 
     /**
      * @description this method is used to add new item to inventory
      * @auther
      * @param item
-     * @date 26, May 2025
+     * @return
+     * @createdAt 26, May 2025
      */
     public InventoryResponse addItem(Inventory item) {
 
@@ -79,7 +84,7 @@ public class InventoryService {
                 stack.push(inventoryResponse);
                 break;
             case "Dry/Baking":
-            case "Frozen ":
+            case "Frozen":
             case "Meat":
                 queue.offer(inventoryResponse);
                 break;
@@ -97,8 +102,9 @@ public class InventoryService {
     /**
      * @description fetching data from the database and storing them in their respective data structures
      * @auther
-     * @param
-     * @date 26, May 2025
+     * @param request
+     * @return
+     * @createdAt  26, May 2025
      */
     public List<InventoryResponse> getItems(boolean request) {
         // Return from in-memory data structures if request is true
@@ -110,7 +116,6 @@ public class InventoryService {
             combined.addAll(queue);
             combined.addAll(list);
 
-            log.info("fetching from data structures");
             return combined;
         }
 
@@ -122,26 +127,33 @@ public class InventoryService {
         queue.clear();
         list.clear();
 
-        for (Inventory inventory : inventoryList) {
-            UUID categoryId = inventory.getCategoryId();
-            UUID vendorId = inventory.getVendorId();
+        for (Inventory inventoryItem : inventoryList) {
+            UUID categoryId = inventoryItem.getCategoryId();
+            UUID vendorId = inventoryItem.getVendorId();
             String category = "";
             String vendor = "";
+
+            // getting category name given the id
             if (categoryId != null){
-                category = itemCategoryService.getCategoryById(inventory.getCategoryId());
+                category = itemCategoryService.getCategoryById(inventoryItem.getCategoryId());
             }
+            // getting vendor name given the id
             if (vendorId != null){
                 vendor = vendorService.findVendorById(vendorId).getName();
             }
+
             InventoryResponse payload = InventoryResponse
                     .builder()
-                    .name(inventory.getName())
-                    .id(inventory.getId())
+                    .id(inventoryItem.getId())
                     .category(category)
+                    .grossPrice(inventoryItem.getGrossPrice())
+                    .unitPrice(inventoryItem.getBuyingPrice())
+                    .name(inventoryItem.getName())
+                    .sellingPrice(inventoryItem.getSellingPrice())
+                    .buyingPrice(inventoryItem.getBuyingPrice())
+                    .description(inventoryItem.getDescription())
+                    .quantity(inventoryItem.getQuantity())
                     .vendor(vendor)
-                    .unitPrice(inventory.getBuyingPrice())
-                    .grossPrice(inventory.getGrossPrice())
-                    .sellingPrice(inventory.getSellingPrice())
                     .build();
 
             switch (payload.getCategory()) {
@@ -172,20 +184,27 @@ public class InventoryService {
         result.addAll(stack);
         result.addAll(queue);
         result.addAll(list);
-log.info("inventory:->>>>{}", result);
+       log.info("inventory:->>>>{}", result);
         return result;
     }
+
 
     /**
      * @description removing item from a data structure based on the category and database base on the id
      * @auther
-     * @param
-     * @date 26, May 2025
+     * @param itemCategory
+     * @return
+     * @createdAt 26, May 2025
      */
     public void removeItem(ItemCategory itemCategory) {
+
+        // getting category name given the id
+        ItemCategory category = itemCategoryRepo.findById(itemCategory.getId())
+                .orElseThrow(()-> new NotFoundException("category record not found"));
+
         InventoryResponse removedItem = null;
 
-        switch (itemCategory.getName()) {
+        switch (category.getName()) {
             case "Beverages":
             case "Bread/Bakery":
             case "Canned/Jarred":
@@ -220,16 +239,18 @@ log.info("inventory:->>>>{}", result);
         }
     }
 
+
     /**
      * @description this method edits an existing item in the inventory
      * @param updatedItem Inventory object containing updated data
-     * @date 26, May 2025
+     * @return
+     * @createdAt 26, May 2025
      */
     public void updateItem(Inventory updatedItem) {
         Optional<Inventory> existingItemOpt = inventoryRepo.findById(updatedItem.getId());
 
         if (existingItemOpt.isEmpty()) {
-            throw new NoSuchElementException("Item not found");
+            throw new NotFoundException("Item record not found");
         }
 
         Inventory existingItem = existingItemOpt.get();
@@ -258,15 +279,34 @@ log.info("inventory:->>>>{}", result);
         queue.clear();
         list.clear();
 
-        for (Inventory inventory : inventoryList) {
+        for (Inventory inventoryItem : inventoryList) {
+
+            UUID categoryId = inventoryItem.getCategoryId();
+            UUID vendorId = inventoryItem.getVendorId();
+            String category = "";
+            String vendor = "";
+
+            // getting category name given the id
+            if (categoryId != null){
+                category = itemCategoryService.getCategoryById(inventoryItem.getCategoryId());
+            }
+            // getting vendor name given the id
+            if (vendorId != null){
+                vendor = vendorService.findVendorById(vendorId).getName();
+            }
+
             InventoryResponse payload = InventoryResponse
                     .builder()
-                    .name(inventory.getName())
-                    .id(inventory.getId())
-                    .category(itemCategoryService.getCategoryById(inventory.getCategoryId()))
-                    .unitPrice(inventory.getBuyingPrice())
-                    .grossPrice(inventory.getGrossPrice())
-                    .sellingPrice(inventory.getSellingPrice())
+                    .id(inventoryItem.getId())
+                    .category(category)
+                    .grossPrice(inventoryItem.getGrossPrice())
+                    .unitPrice(inventoryItem.getBuyingPrice())
+                    .name(inventoryItem.getName())
+                    .sellingPrice(inventoryItem.getSellingPrice())
+                    .buyingPrice(inventoryItem.getBuyingPrice())
+                    .description(inventoryItem.getDescription())
+                    .quantity(inventoryItem.getQuantity())
+                    .vendor(vendor)
                     .build();
 
             switch (payload.getCategory()) {

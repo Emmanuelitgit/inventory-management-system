@@ -25,7 +25,7 @@ public class InventoryRest {
 
     @PostMapping
     public ResponseEntity<Object> saveItem(@RequestBody Inventory item) {
-        InventoryResponse inventoryRes = inventoryService.addItem(item);
+        Inventory inventoryRes = inventoryService.addItem(item);
         ResponseDTO responseDTO = AppUtils.getResponseDto("Inventory created successfully", HttpStatus.CREATED, inventoryRes);
         return new ResponseEntity<>(responseDTO,HttpStatus.valueOf(200));    }
 

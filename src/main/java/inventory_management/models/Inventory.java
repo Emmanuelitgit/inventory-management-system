@@ -25,5 +25,4 @@ public class Inventory {
     private String description;
     private Float grossPrice;
     private UUID categoryId;
-    private UUID vendorId;
 }

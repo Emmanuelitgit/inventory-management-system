@@ -18,9 +18,9 @@ import java.util.*;
 public class InventoryService {
 
     // data structures definition here
-    private final Stack<InventoryResponse> stack = new Stack<>();
-    private final Queue<InventoryResponse> queue = new LinkedList<>();
-    private final List<InventoryResponse> list = new ArrayList<>();
+    private final Stack<Inventory> stack = new Stack<>();
+    private final Queue<Inventory> queue = new LinkedList<>();
+    private final List<Inventory> list = new ArrayList<>();
     private final Map<String, Integer> salesMap = new HashMap<>();
     private final Map<String, Vendor> vendorMap = new HashMap<>();
 
@@ -45,34 +45,27 @@ public class InventoryService {
      * @return
      * @createdAt 26, May 2025
      */
-    public InventoryResponse addItem(Inventory item) {
+    public Inventory addItem(Inventory item) {
 
         // save data to database
         Inventory inventoryItem = inventoryRepo.save(item);
 
-        // getting vendor name by id
-        String vendor = "";
-        if (item.getVendorId() != null){
-            vendor = vendorService.findVendorById(item.getVendorId()).getName();
-        }
         // getting category name by id
         String category = "";
         if (item.getCategoryId() !=null){
             category = itemCategoryService.getCategoryById(item.getCategoryId());
         }
         // prepare data to load to the data structures
-        InventoryResponse inventoryResponse = InventoryResponse
+        Inventory inventoryResponse = Inventory
                 .builder()
                 .id(inventoryItem.getId())
-                .category(category)
                 .grossPrice(inventoryItem.getGrossPrice())
-                .unitPrice(inventoryItem.getBuyingPrice())
                 .name(inventoryItem.getName())
                 .sellingPrice(inventoryItem.getSellingPrice())
                 .buyingPrice(inventoryItem.getBuyingPrice())
                 .description(inventoryItem.getDescription())
                 .quantity(inventoryItem.getQuantity())
-                .vendor(vendor)
+                .categoryId(inventoryItem.getCategoryId())
                 .build();
 
         // store data in data structures base on categories
@@ -106,10 +99,10 @@ public class InventoryService {
      * @return
      * @createdAt  26, May 2025
      */
-    public List<InventoryResponse> getItems(boolean request) {
+    public List<Inventory> getItems(boolean request) {
         // Return from in-memory data structures if request is true
         if (request) {
-            List<InventoryResponse> combined = new ArrayList<>();
+            List<Inventory> combined = new ArrayList<>();
 
             // Combine all data structures into one list
             combined.addAll(stack);
@@ -129,36 +122,26 @@ public class InventoryService {
 
         for (Inventory inventoryItem : inventoryList) {
             UUID categoryId = inventoryItem.getCategoryId();
-            UUID vendorId = inventoryItem.getVendorId();
             String category = "";
-            String vendor = "";
 
             // getting category name given the id
             if (categoryId != null){
                 category = itemCategoryService.getCategoryById(inventoryItem.getCategoryId());
             }
-            // getting vendor name given the id
-            if (vendorId != null){
-                if (vendorService.findVendorById(vendorId) != null){
-                    vendor = vendorService.findVendorById(vendorId).getName();
-                }
-            }
 
-            InventoryResponse payload = InventoryResponse
+            Inventory payload = Inventory
                     .builder()
                     .id(inventoryItem.getId())
-                    .category(category)
                     .grossPrice(inventoryItem.getGrossPrice())
-                    .unitPrice(inventoryItem.getBuyingPrice())
                     .name(inventoryItem.getName())
                     .sellingPrice(inventoryItem.getSellingPrice())
                     .buyingPrice(inventoryItem.getBuyingPrice())
                     .description(inventoryItem.getDescription())
                     .quantity(inventoryItem.getQuantity())
-                    .vendor(vendor)
+                    .categoryId(inventoryItem.getCategoryId())
                     .build();
 
-            switch (payload.getCategory()) {
+            switch (category) {
                 case "Beverages":
                 case "Bread/Bakery":
                 case "Canned/Jarred":
@@ -177,12 +160,12 @@ public class InventoryService {
                     list.add(payload);
                     break;
                 default:
-                    System.out.println("⚠️ Unknown category: " + payload.getCategory());
+                    System.out.println("⚠️ Unknown category: " + category);
             }
         }
 
         // Combine the populated data structures and return
-        List<InventoryResponse> result = new ArrayList<>();
+        List<Inventory> result = new ArrayList<>();
         result.addAll(stack);
         result.addAll(queue);
         result.addAll(list);
@@ -204,7 +187,7 @@ public class InventoryService {
         ItemCategory category = itemCategoryRepo.findById(itemCategory.getId())
                 .orElseThrow(()-> new NotFoundException("category record not found"));
 
-        InventoryResponse removedItem = null;
+        Inventory removedItem = null;
 
         switch (category.getName()) {
             case "Beverages":
@@ -265,7 +248,6 @@ public class InventoryService {
         existingItem.setCategoryId(updatedItem.getCategoryId());
         existingItem.setDescription(updatedItem.getDescription());
         existingItem.setQuantity(updatedItem.getQuantity());
-        existingItem.setVendorId(updatedItem.getVendorId());
 
         inventoryRepo.save(existingItem);
 
@@ -283,35 +265,26 @@ public class InventoryService {
 
         for (Inventory inventoryItem : inventoryList) {
 
-            UUID categoryId = inventoryItem.getCategoryId();
-            UUID vendorId = inventoryItem.getVendorId();
-            String category = "";
-            String vendor = "";
-
             // getting category name given the id
+            UUID categoryId = inventoryItem.getCategoryId();
+            String category = "";
             if (categoryId != null){
                 category = itemCategoryService.getCategoryById(inventoryItem.getCategoryId());
             }
-            // getting vendor name given the id
-            if (vendorId != null){
-                vendor = vendorService.findVendorById(vendorId).getName();
-            }
 
-            InventoryResponse payload = InventoryResponse
+
+            Inventory payload = Inventory
                     .builder()
                     .id(inventoryItem.getId())
-                    .category(category)
                     .grossPrice(inventoryItem.getGrossPrice())
-                    .unitPrice(inventoryItem.getBuyingPrice())
                     .name(inventoryItem.getName())
                     .sellingPrice(inventoryItem.getSellingPrice())
                     .buyingPrice(inventoryItem.getBuyingPrice())
                     .description(inventoryItem.getDescription())
                     .quantity(inventoryItem.getQuantity())
-                    .vendor(vendor)
                     .build();
 
-            switch (payload.getCategory()) {
+            switch (category) {
                 case "Beverages":
                 case "Bread/Bakery":
                 case "Canned/Jarred":
@@ -330,7 +303,7 @@ public class InventoryService {
                     list.add(payload);
                     break;
                 default:
-                    System.out.println("⚠️ Unknown category: " + payload.getCategory());
+                    System.out.println("⚠️ Unknown category: " + category);
             }
         }
     }

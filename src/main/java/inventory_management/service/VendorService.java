@@ -60,6 +60,7 @@ public class VendorService {
         // Store in hashmap/list
         for (Vendor vendor : vendorsData) {
             HashMap<String, String> vendorHashMap = new HashMap<>();
+            vendorHashMap.put("id", vendor.getId().toString());
             vendorHashMap.put("name", vendor.getName());
             vendorHashMap.put("email", vendor.getEmail());
             vendorHashMap.put("phone", vendor.getPhone());

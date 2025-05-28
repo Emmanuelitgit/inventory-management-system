@@ -16,9 +16,12 @@ import java.util.UUID;
 public class InventoryResponse {
     private UUID id;
     private String name;
-    private float unitPrice;
-    private float sellingPrice;
-    private float grossPrice;
+    private Float unitPrice;
+    private Float sellingPrice;
+    private Float buyingPrice;
+    private Float grossPrice;
+    private Integer quantity;
+    private String description;
     private String category;
     private String vendor;
 }

@@ -13,17 +13,17 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "item_tb")
+@Table(name = "inventory_tb")
 public class Inventory {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String name;
-    private float buyingPrice;
-    private float sellingPrice;
+    private Float buyingPrice;
+    private Float sellingPrice;
     private Integer quantity;
     private String description;
-    private float grossPrice;
+    private Float grossPrice;
     private UUID categoryId;
     private UUID vendorId;
 }

@@ -25,8 +25,8 @@ public class InventoryRest {
 
     @PostMapping
     public ResponseEntity<Object> saveItem(@RequestBody Inventory item) {
-        inventoryService.addItem(item);
-        ResponseDTO responseDTO = AppUtils.getResponseDto("Inventory created successfully", HttpStatus.CREATED);
+        InventoryResponse inventoryRes = inventoryService.addItem(item);
+        ResponseDTO responseDTO = AppUtils.getResponseDto("Inventory created successfully", HttpStatus.CREATED, inventoryRes);
         return new ResponseEntity<>(responseDTO,HttpStatus.valueOf(200));    }
 
     @GetMapping
@@ -44,7 +44,7 @@ public class InventoryRest {
 
     @PutMapping
     public ResponseEntity<Object> updateItem(@RequestBody Inventory item) {
-        inventoryService.addItem(item);
+        inventoryService.updateItem(item);
         if (item == null ){
             return new ResponseEntity<>("payload cannot be null", HttpStatusCode.valueOf(400));
         }

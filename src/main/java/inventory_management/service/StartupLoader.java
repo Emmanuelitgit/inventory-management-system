@@ -18,7 +18,7 @@ public class StartupLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-//        inventoryService.getItems(false);
+        inventoryService.getItems(false);
         vendorService.getVendors(false);
         System.out.println("✅ Items loaded into data structures at startup.");
     }

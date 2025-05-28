@@ -40,18 +40,34 @@ public class InventoryService {
      * @param item
      * @date 26, May 2025
      */
-    public void addItem(Inventory item) {
+    public InventoryResponse addItem(Inventory item) {
 
-        String category = itemCategoryService.getCategoryById(item.getCategoryId());
+        // save data to database
+        Inventory inventoryItem = inventoryRepo.save(item);
+
+        // getting vendor name by id
+        String vendor = "";
+        if (item.getVendorId() != null){
+            vendor = vendorService.findVendorById(item.getVendorId()).getName();
+        }
+        // getting category name by id
+        String category = "";
+        if (item.getCategoryId() !=null){
+            category = itemCategoryService.getCategoryById(item.getCategoryId());
+        }
         // prepare data to load to the data structures
         InventoryResponse inventoryResponse = InventoryResponse
                 .builder()
+                .id(inventoryItem.getId())
                 .category(category)
-                .grossPrice(item.getGrossPrice())
-                .unitPrice(item.getBuyingPrice())
-                .name(item.getName())
-                .sellingPrice(item.getSellingPrice())
-                .vendor("")
+                .grossPrice(inventoryItem.getGrossPrice())
+                .unitPrice(inventoryItem.getBuyingPrice())
+                .name(inventoryItem.getName())
+                .sellingPrice(inventoryItem.getSellingPrice())
+                .buyingPrice(inventoryItem.getBuyingPrice())
+                .description(inventoryItem.getDescription())
+                .quantity(inventoryItem.getQuantity())
+                .vendor(vendor)
                 .build();
 
         // store data in data structures base on categories
@@ -75,15 +91,7 @@ public class InventoryService {
                 break;
         }
 
-        // save data to database
-        Inventory inventoryData = Inventory
-                .builder()
-                .grossPrice(inventoryResponse.getGrossPrice())
-                .name(item.getName())
-                .buyingPrice(inventoryResponse.getUnitPrice())
-                .sellingPrice(inventoryResponse.getSellingPrice())
-                .build();
-        inventoryRepo.save(inventoryData);
+        return inventoryResponse;
     }
 
     /**
@@ -102,6 +110,7 @@ public class InventoryService {
             combined.addAll(queue);
             combined.addAll(list);
 
+            log.info("fetching from data structures");
             return combined;
         }
 
@@ -114,11 +123,22 @@ public class InventoryService {
         list.clear();
 
         for (Inventory inventory : inventoryList) {
+            UUID categoryId = inventory.getCategoryId();
+            UUID vendorId = inventory.getVendorId();
+            String category = "";
+            String vendor = "";
+            if (categoryId != null){
+                category = itemCategoryService.getCategoryById(inventory.getCategoryId());
+            }
+            if (vendorId != null){
+                vendor = vendorService.findVendorById(vendorId).getName();
+            }
             InventoryResponse payload = InventoryResponse
                     .builder()
                     .name(inventory.getName())
                     .id(inventory.getId())
-                    .category(itemCategoryService.getCategoryById(inventory.getCategoryId()))
+                    .category(category)
+                    .vendor(vendor)
                     .unitPrice(inventory.getBuyingPrice())
                     .grossPrice(inventory.getGrossPrice())
                     .sellingPrice(inventory.getSellingPrice())
@@ -152,7 +172,7 @@ public class InventoryService {
         result.addAll(stack);
         result.addAll(queue);
         result.addAll(list);
-
+log.info("inventory:->>>>{}", result);
         return result;
     }
 

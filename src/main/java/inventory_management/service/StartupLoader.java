@@ -9,17 +9,20 @@ public class StartupLoader implements CommandLineRunner {
 
     private final InventoryService inventoryService;
     private final VendorService vendorService;
+    private final IssueItemService issueItemService;
 
     @Autowired
-    public StartupLoader(InventoryService inventoryService, VendorService vendorService) {
+    public StartupLoader(InventoryService inventoryService, VendorService vendorService, IssueItemService issueItemService) {
         this.inventoryService = inventoryService;
         this.vendorService = vendorService;
+        this.issueItemService = issueItemService;
     }
 
     @Override
     public void run(String... args) {
         inventoryService.getItems(false);
         vendorService.getVendors(false);
+        issueItemService.getAllIssuedItems(false);
         System.out.println("✅ Items loaded into data structures at startup.");
     }
 }

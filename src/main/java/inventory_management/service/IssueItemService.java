@@ -8,12 +8,14 @@ import inventory_management.models.Vendor;
 import inventory_management.repo.InventoryRepo;
 import inventory_management.repo.IssueItemRepo;
 import inventory_management.repo.VendorRepo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
 import java.util.*;
 
+@Slf4j
 @Service
 public class IssueItemService {
 
@@ -69,7 +71,10 @@ public class IssueItemService {
      * @date 26, May 2025
      */
     public List<Map<String, Object>> getAllIssuedItems(boolean fromMemory) {
-        if (fromMemory) return itemList;
+        if (fromMemory) {
+            log.info("fetching from data structures");
+            return itemList;
+        }
 
         itemList.clear();
         List<IssueItem> dbItems = issueItemRepo.findAll();

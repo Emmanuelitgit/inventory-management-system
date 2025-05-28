@@ -139,7 +139,9 @@ public class InventoryService {
             }
             // getting vendor name given the id
             if (vendorId != null){
-                vendor = vendorService.findVendorById(vendorId).getName();
+                if (vendorService.findVendorById(vendorId) != null){
+                    vendor = vendorService.findVendorById(vendorId).getName();
+                }
             }
 
             InventoryResponse payload = InventoryResponse

@@ -1,5 +1,6 @@
 package inventory_management.service;
 
+import inventory_management.exception.NotFoundException;
 import inventory_management.models.Vendor;
 import inventory_management.repo.VendorRepo;
 import lombok.extern.slf4j.Slf4j;
@@ -23,11 +24,16 @@ public class VendorService {
     /**
      * @description adding new vendor record with hashmap
      * @auther
-     * @param vendor
+     * @param vendorPayload
      * @date 26, May 2025
      */
-    public Vendor saveVendor(Vendor vendor){
+    public Vendor saveVendor(Vendor vendorPayload){
+
+        // saving to database
+        Vendor vendor = vendorRepo.save(vendorPayload);
+        // storing data in hashmap
         HashMap<String, String> vendorHashMap = new HashMap<>();
+        vendorHashMap.put("id", vendor.getId().toString());
         vendorHashMap.put("name", vendor.getName());
         vendorHashMap.put("email", vendor.getEmail());
         vendorHashMap.put("phone", vendor.getPhone());
@@ -38,7 +44,6 @@ public class VendorService {
         vendorHashMap.put("contactPerson", vendor.getContactPerson());
 
         vendors.add(vendorHashMap);
-        vendorRepo.save(vendor);
         return vendor;
     }
 
@@ -51,9 +56,9 @@ public class VendorService {
     public List<Object> getVendors(boolean request) {
         if (request) {
             // Return in-memory data
+            log.info("fetching from data structures");
             return vendors;
         }
-
         // Fetch from DB
         List<Vendor> vendorsData = vendorRepo.findAll();
 
@@ -72,7 +77,7 @@ public class VendorService {
 
             vendors.add(vendorHashMap.clone());
         }
-log.info("vendors:->>>>>>{}", vendors);
+      log.info("vendors:->>>>>>{}", vendors);
         return vendors;
     }
 
@@ -117,6 +122,42 @@ log.info("vendors:->>>>>>{}", vendors);
             return saved;
         }
         return null;
+    }
+
+
+    /**
+     * @description delete vendor record by id from database and in-memory list
+     * @author
+     * @param vendorId
+     * @date 26, May 2025
+     */
+    public boolean removeVendor(UUID vendorId) {
+        Optional<Vendor> vendorOptional = vendorRepo.findById(vendorId);
+
+        if (vendorOptional.isPresent()) {
+
+            // checking if vendor exist by id
+            Vendor vendor = vendorRepo.findById(vendorId)
+                    .orElseThrow(()-> new NotFoundException("vendor record not found"));
+
+            // remove from DB
+            vendorRepo.deleteById(vendorId);
+
+            // remove from in-memory list
+            vendors.removeIf(v -> {
+                if (v instanceof HashMap) {
+                    HashMap<?, ?> map = (HashMap<?, ?>) v;
+                    return vendorId.toString().equals(map.get("id"));
+                }
+                return false;
+            });
+
+            log.info("Vendor with ID {} deleted successfully.", vendorId);
+            return true;
+        }
+
+        log.warn("Vendor with ID {} not found.", vendorId);
+        return false;
     }
 
 }

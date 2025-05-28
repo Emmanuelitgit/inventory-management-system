@@ -31,17 +31,9 @@ public class VendorService {
 
         // saving to database
         Vendor vendor = vendorRepo.save(vendorPayload);
-        // storing data in hashmap
-        HashMap<String, String> vendorHashMap = new HashMap<>();
-        vendorHashMap.put("id", vendor.getId().toString());
-        vendorHashMap.put("name", vendor.getName());
-        vendorHashMap.put("email", vendor.getEmail());
-        vendorHashMap.put("phone", vendor.getPhone());
-        vendorHashMap.put("address", vendor.getAddress());
-        vendorHashMap.put("city", vendor.getCity());
-        vendorHashMap.put("state", vendor.getState());
-        vendorHashMap.put("zipCode", vendor.getZipCode());
-        vendorHashMap.put("contactPerson", vendor.getContactPerson());
+
+        // creating a hashmap to store vendor data
+        HashMap<String, String> vendorHashMap = createHashMap(vendor);
 
         vendors.add(vendorHashMap);
         return vendor;
@@ -64,16 +56,9 @@ public class VendorService {
 
         // Store in hashmap/list
         for (Vendor vendor : vendorsData) {
-            HashMap<String, String> vendorHashMap = new HashMap<>();
-            vendorHashMap.put("id", vendor.getId().toString());
-            vendorHashMap.put("name", vendor.getName());
-            vendorHashMap.put("email", vendor.getEmail());
-            vendorHashMap.put("phone", vendor.getPhone());
-            vendorHashMap.put("address", vendor.getAddress());
-            vendorHashMap.put("city", vendor.getCity());
-            vendorHashMap.put("state", vendor.getState());
-            vendorHashMap.put("zipCode", vendor.getZipCode());
-            vendorHashMap.put("contactPerson", vendor.getContactPerson());
+
+            // creating a hashmap to store vendor data
+            HashMap<String, String> vendorHashMap = createHashMap(vendor);
 
             vendors.add(vendorHashMap.clone());
         }
@@ -160,4 +145,19 @@ public class VendorService {
         return false;
     }
 
+    // a helper method for creating a hashmap for storing vendors data
+    private HashMap<String, String> createHashMap(Vendor vendor){
+        HashMap<String, String> vendorHashMap = new HashMap<>();
+        vendorHashMap.put("id", vendor.getId().toString());
+        vendorHashMap.put("name", vendor.getName());
+        vendorHashMap.put("email", vendor.getEmail());
+        vendorHashMap.put("phone", vendor.getPhone());
+        vendorHashMap.put("address", vendor.getAddress());
+        vendorHashMap.put("city", vendor.getCity());
+        vendorHashMap.put("state", vendor.getState());
+        vendorHashMap.put("zipCode", vendor.getZipCode());
+        vendorHashMap.put("contactPerson", vendor.getContactPerson());
+
+        return vendorHashMap;
+    }
 }

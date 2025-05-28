@@ -256,7 +256,7 @@ public class InventoryService {
     }
 
     // a helper method for refreshing data in the data structures with the updated data
-    private void refreshMemoryStructures() {
+    public void refreshMemoryStructures() {
         List<Inventory> inventoryList = inventoryRepo.findAll();
 
         stack.clear();

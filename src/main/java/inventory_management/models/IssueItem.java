@@ -1,21 +1,28 @@
 package inventory_management.models;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
+@Entity
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "issue_item_tb")
 public class IssueItem {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    private String name;
-    private Float sellingPrice;
+    private UUID productId;
     private Integer quantity;
     private Float totalPrice;
-    private String customer;
+    private String vendorId;
     private ZonedDateTime createdAt;
 }

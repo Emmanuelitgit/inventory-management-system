@@ -26,9 +26,6 @@ public class InventoryRest {
     @PostMapping
     public ResponseEntity<Object> saveItem(@RequestBody Inventory item) {
         inventoryService.addItem(item);
-        if (item == null ){
-            return new ResponseEntity<>("payload cannot be null", HttpStatusCode.valueOf(400));
-        }
         ResponseDTO responseDTO = AppUtils.getResponseDto("Inventory created successfully", HttpStatus.CREATED);
         return new ResponseEntity<>(responseDTO,HttpStatus.valueOf(200));    }
 

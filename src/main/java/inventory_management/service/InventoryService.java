@@ -4,7 +4,8 @@ import inventory_management.dto.InventoryResponse;
 import inventory_management.models.Inventory;
 import inventory_management.models.ItemCategory;
 import inventory_management.models.Vendor;
-import inventory_management.repo.ItemRepo;
+import inventory_management.repo.InventoryRepo;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,13 +24,13 @@ public class InventoryService {
     private final Map<String, Vendor> vendorMap = new HashMap<>();
 
 
-    private final ItemRepo itemRepo;
+    private final InventoryRepo inventoryRepo;
     private final ItemCategoryService itemCategoryService;
     private final VendorService vendorService;
 
     @Autowired
-    public InventoryService(ItemRepo itemRepo, ItemCategoryService itemCategoryService, VendorService vendorService) {
-        this.itemRepo = itemRepo;
+    public InventoryService(InventoryRepo inventoryRepo, ItemCategoryService itemCategoryService, VendorService vendorService) {
+        this.inventoryRepo = inventoryRepo;
         this.itemCategoryService = itemCategoryService;
         this.vendorService = vendorService;
     }
@@ -40,6 +41,7 @@ public class InventoryService {
      * @param item
      * @date 26, May 2025
      */
+    @Transactional
     public void addItem(Inventory item) {
 
         String category = itemCategoryService.getCategoryById(item.getCategoryId());
@@ -75,15 +77,9 @@ public class InventoryService {
                 break;
         }
 
+        log.info("Data:->>>>>{}", inventoryRepo.save(item));
         // save data to database
-        Inventory inventoryData = Inventory
-                .builder()
-                .grossPrice(inventoryResponse.getGrossPrice())
-                .name(item.getName())
-                .buyingPrice(inventoryResponse.getUnitPrice())
-                .sellingPrice(inventoryResponse.getSellingPrice())
-                .build();
-        itemRepo.save(inventoryData);
+        inventoryRepo.save(item);
     }
 
     /**
@@ -106,7 +102,7 @@ public class InventoryService {
         }
 
         // Else, fetch from the database and populate the data structures
-        List<Inventory> inventoryList = itemRepo.findAll();
+        List<Inventory> inventoryList = inventoryRepo.findAll();
 
         // Clear old data
         stack.clear();
@@ -195,8 +191,8 @@ public class InventoryService {
 
         // removing item from database
         if (removedItem != null) {
-            Optional<Inventory> itemFromDb = itemRepo.findById(removedItem.getId());
-            itemFromDb.ifPresent(itemRepo::delete);
+            Optional<Inventory> itemFromDb = inventoryRepo.findById(removedItem.getId());
+            itemFromDb.ifPresent(inventoryRepo::delete);
         }
     }
 
@@ -206,7 +202,7 @@ public class InventoryService {
      * @date 26, May 2025
      */
     public void updateItem(Inventory updatedItem) {
-        Optional<Inventory> existingItemOpt = itemRepo.findById(updatedItem.getId());
+        Optional<Inventory> existingItemOpt = inventoryRepo.findById(updatedItem.getId());
 
         if (existingItemOpt.isEmpty()) {
             throw new NoSuchElementException("Item not found");
@@ -224,7 +220,7 @@ public class InventoryService {
         existingItem.setQuantity(updatedItem.getQuantity());
         existingItem.setVendorId(updatedItem.getVendorId());
 
-        itemRepo.save(existingItem);
+        inventoryRepo.save(existingItem);
 
         // Update in-memory structures
         refreshMemoryStructures();
@@ -232,7 +228,7 @@ public class InventoryService {
 
     // a helper method for refreshing data in the data structures with the updated data
     private void refreshMemoryStructures() {
-        List<Inventory> inventoryList = itemRepo.findAll();
+        List<Inventory> inventoryList = inventoryRepo.findAll();
 
         stack.clear();
         queue.clear();

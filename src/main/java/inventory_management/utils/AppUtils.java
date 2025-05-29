@@ -3,9 +3,16 @@ package inventory_management.utils;
 import inventory_management.dto.ResponseDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
 
 
 @Slf4j
@@ -61,5 +68,23 @@ public class AppUtils {
     public static String getFullName(String first, String last){
         return first + " " + " " + last;
     }
+
+    /**
+     * This method is used to set authenticated user authorities.
+     * @param username
+     * @return
+     * @auther Emmanuel Yidana
+     * @createdAt 16h April 2025
+     */
+//    public void setAuthorities(String username, Object userId) {
+//        String role = getUserRole(username);
+//        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role);
+//        Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+//        grantedAuthorities.add(authority);
+//        Authentication authentication = new UsernamePasswordAuthenticationToken(
+//                userId, null, grantedAuthorities
+//        );
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
+//    }
 
 }

@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 public class AuthenticationService {
 
     String SECRET = "RKUGLRKBKBSKLGSFIJSBKFBKJSDJBVugdtyidvctyfktvgkuyrcggchvrydtxtxuvyvgghghhhjhkjkjjurtyvkgvK";
-    long MINUTES = TimeUnit.MINUTES.toMillis(60);
+    long EXPIRATION_TIME = TimeUnit.DAYS.toMillis(365);
 
     /**
      * @description: A method to generate a jwt token
@@ -32,7 +32,7 @@ public class AuthenticationService {
         return Jwts.builder()
                 .setClaims(claims)
                 .signWith(secretKey())
-                .setExpiration(Date.from(Instant.now().plusMillis(MINUTES)))
+                .setExpiration(Date.from(Instant.now().plusMillis(EXPIRATION_TIME)))
                 .setIssuedAt(Date.from(Instant.now()))
                 .setSubject(username)
                 .compact();

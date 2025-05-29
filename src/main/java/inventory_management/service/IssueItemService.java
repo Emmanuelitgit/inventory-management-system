@@ -54,7 +54,7 @@ public class IssueItemService {
 
         Inventory inventory = updateInventory(issueItem.getQuantity(), issueItem.getProductId());
 
-        Map<String, Object> itemMap = createItemMap(issueItem, inventory, vendor);
+        Map<String, Object> itemMap = createItemMap(issueItemPayload, inventory, vendor);
         itemList.add(itemMap);
 
         // refresh inventory data structures

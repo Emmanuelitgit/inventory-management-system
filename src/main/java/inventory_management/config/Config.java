@@ -13,26 +13,29 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
 @Configuration
 public class Config {
 
     private final UserDetailsService userDetailsService;
+    private final CustomFilter customFilter;
 
     @Autowired
-    public Config(UserDetailsService userDetailsService) {
+    public Config(UserDetailsService userDetailsService, CustomFilter customFilter) {
         this.userDetailsService = userDetailsService;
+        this.customFilter = customFilter;
     }
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.authorizeHttpRequests((auth->{
-                    auth.anyRequest().permitAll();
+                    auth.anyRequest().authenticated();
                 }))
                 .cors((AbstractHttpConfigurer::disable))
                 .csrf((AbstractHttpConfigurer::disable))
-//                .addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

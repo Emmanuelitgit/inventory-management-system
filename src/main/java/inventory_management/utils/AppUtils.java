@@ -6,12 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.UUID;
 
-import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.contains;
-import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.exact;
 
 @Slf4j
 @Component
@@ -23,7 +18,7 @@ public class AppUtils {
      * @param status
      * @return responseDto object
      * @auther
-     * @createdAt 16h April 2025
+     * @createdAt 29th, May 2025
      */
     public static ResponseDTO getResponseDto(String message, HttpStatus status){
         ResponseDTO responseDto = new ResponseDTO();
@@ -40,7 +35,7 @@ public class AppUtils {
      * @param data
      * @return responseDto object
      * @auther
-     * @createdAt 16h April 2025
+     * @createdAt 29th, May 2025
      */
     public static ResponseDTO getResponseDto(String message, HttpStatus status, Object data){
         if(data==null){
@@ -53,6 +48,18 @@ public class AppUtils {
         responseDto.setStatusCode(status.value());
         responseDto.setData(data);
         return responseDto;
+    }
+
+    /**
+     * This method is used to get user full name.
+     * @param first
+     * @param last
+     * @return responseDto object
+     * @auther Emmanuel Yidana
+     * @createdAt 29th, May 2025
+     */
+    public static String getFullName(String first, String last){
+        return first + " " + " " + last;
     }
 
 }

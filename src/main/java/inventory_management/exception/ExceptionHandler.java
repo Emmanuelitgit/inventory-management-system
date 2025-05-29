@@ -25,4 +25,10 @@ public class ExceptionHandler {
         return new ResponseEntity<>(response, HttpStatusCode.valueOf(400));
     }
 
+    @org.springframework.web.bind.annotation.ExceptionHandler(UnAuthorizeException.class)
+    ResponseEntity<ResponseDTO> handleUnAuthorizeException(UnAuthorizeException exception){
+        ResponseDTO response = AppUtils.getResponseDto(exception.getMessage(), HttpStatus.valueOf(401));
+        return new ResponseEntity<>(response, HttpStatusCode.valueOf(401));
+    }
+
 }

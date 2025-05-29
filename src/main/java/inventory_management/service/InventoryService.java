@@ -282,6 +282,7 @@ public class InventoryService {
                     .buyingPrice(inventoryItem.getBuyingPrice())
                     .description(inventoryItem.getDescription())
                     .quantity(inventoryItem.getQuantity())
+                    .categoryId(inventoryItem.getCategoryId())
                     .build();
 
             switch (category) {

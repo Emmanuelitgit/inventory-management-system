@@ -42,7 +42,7 @@ public class InventoryService {
      * @description this method is used to add new item to inventory
      * @auther
      * @param item
-     * @return
+     * @return Inventory item
      * @createdAt 26, May 2025
      */
     public Inventory addItem(Inventory item) {
@@ -96,7 +96,7 @@ public class InventoryService {
      * @description fetching data from the database and storing them in their respective data structures
      * @auther
      * @param request
-     * @return
+     * @return List<Inventory>
      * @createdAt  26, May 2025
      */
     public List<Inventory> getItems(boolean request) {
@@ -169,7 +169,7 @@ public class InventoryService {
         result.addAll(stack);
         result.addAll(queue);
         result.addAll(list);
-       log.info("inventory:->>>>{}", result);
+        log.info("inventory:->>>>{}", result);
         return result;
     }
 
@@ -228,7 +228,7 @@ public class InventoryService {
     /**
      * @description this method edits an existing item in the inventory
      * @param updatedItem Inventory object containing updated data
-     * @return
+     * @return Inventory item
      * @createdAt 26, May 2025
      */
     public void updateItem(Inventory updatedItem) {

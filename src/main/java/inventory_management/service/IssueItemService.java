@@ -49,9 +49,6 @@ public class IssueItemService {
         issueItemPayload.setCreatedAt(ZonedDateTime.now());
         IssueItem issueItem = issueItemRepo.save(issueItemPayload);
 
-        // refresh inventory data structures
-        inventoryService.refreshMemoryStructures();
-
         Vendor vendor = vendorRepo.findById(UUID.fromString(issueItemPayload.getVendorId()))
                 .orElseThrow(() -> new NotFoundException("Vendor record not found"));
 
@@ -59,6 +56,9 @@ public class IssueItemService {
 
         Map<String, Object> itemMap = createItemMap(issueItem, inventory, vendor);
         itemList.add(itemMap);
+
+        // refresh inventory data structures
+        inventoryService.refreshMemoryStructures();
 
         return issueItem;
     }
@@ -72,12 +72,12 @@ public class IssueItemService {
      */
     public List<Map<String, Object>> getAllIssuedItems(boolean fromMemory) {
         if (fromMemory) {
-            log.info("fetching from data structures");
+            log.info("fetching from data structures{}", itemList);
             return itemList;
         }
-
         itemList.clear();
         List<IssueItem> dbItems = issueItemRepo.findAll();
+        log.info("fetching from database{}", dbItems);
         for (IssueItem item : dbItems) {
             Vendor vendor = vendorRepo.findById(UUID.fromString(item.getVendorId())).orElse(null);
             Inventory inventory = inventoryRepo.findById(item.getProductId()).orElse(null);
@@ -120,14 +120,15 @@ public class IssueItemService {
         existingItem.setTotalPrice(updatedItem.getTotalPrice());
 
         IssueItem savedItem = issueItemRepo.save(existingItem);
-        // refresh inventory data structures
-        inventoryService.refreshMemoryStructures();
 
         itemList.removeIf(item -> item.get("id").equals(savedItem.getId()));
 
         Vendor vendor = vendorRepo.findById(UUID.fromString(savedItem.getVendorId())).orElse(null);
         Inventory inventory = inventoryRepo.findById(savedItem.getProductId()).orElse(null);
         itemList.add(createItemMap(savedItem, inventory, vendor));
+
+        // refresh inventory data structures
+        inventoryService.refreshMemoryStructures();
 
         return savedItem;
     }

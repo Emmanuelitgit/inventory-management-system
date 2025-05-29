@@ -48,11 +48,12 @@ public class VendorService {
     public List<Object> getVendors(boolean request) {
         if (request) {
             // Return in-memory data
-            log.info("fetching from data structures");
+            log.info("fetching from data structures{}", vendors);
             return vendors;
         }
         // Fetch from DB
         List<Vendor> vendorsData = vendorRepo.findAll();
+        log.info("fetching from database{}", vendorsData);
 
         // Store in hashmap/list
         for (Vendor vendor : vendorsData) {
@@ -62,7 +63,6 @@ public class VendorService {
 
             vendors.add(vendorHashMap.clone());
         }
-      log.info("vendors:->>>>>>{}", vendors);
         return vendors;
     }
 

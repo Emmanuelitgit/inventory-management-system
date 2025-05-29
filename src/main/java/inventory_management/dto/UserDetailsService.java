@@ -1,5 +1,6 @@
 package inventory_management.dto;
 
+import inventory_management.exception.UnAuthorizeException;
 import inventory_management.models.User;
 import inventory_management.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class UserDetailsService implements org.springframework.security.core.use
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> userOptional = userRepo.findUserByEmail(username);
         if (userOptional.isEmpty()){
-           throw new UsernameNotFoundException("Invalid credentials");
+           throw new UnAuthorizeException("Invalid credentials");
         }
 
         return org.springframework.security.core.userdetails.User.builder()

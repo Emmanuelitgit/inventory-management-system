@@ -108,12 +108,14 @@ public class InventoryService {
             combined.addAll(stack);
             combined.addAll(queue);
             combined.addAll(list);
+            log.info("fetching from data structures{}", combined);
 
             return combined;
         }
 
         // Else, fetch from the database and populate the data structures
         List<Inventory> inventoryList = inventoryRepo.findAll();
+        log.info("fetching from database{}", inventoryList);
 
         // Clear old data
         stack.clear();

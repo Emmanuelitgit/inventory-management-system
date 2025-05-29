@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,8 +41,8 @@ public class AuthenticationRest {
      * @description This method is used to authenticate users abd generate token on authentication success.
      * @param credentials
      * @return
-     * @auther Emmanuel Yidana
-     * @createdAt 30th April 2025
+     * @auther
+     * @createdAt 29th, May 2025
      */
     @PostMapping
     public ResponseEntity<ResponseDTO> authenticateUser(@RequestBody User credentials){

@@ -19,11 +19,11 @@ public class AuthenticationService {
     long MINUTES = TimeUnit.MINUTES.toMillis(60);
 
     /**
-     * @auther Emmanuel Yidana
      * @description: A method to generate a jwt token
-     * @date 28th-04-2025
+     * @auther
      * @param: username
      * @return token
+     * @createdAt 29th, May 2025
      */
     public String generateToken(String username, UUID userId){
         Map<String, Object> claims = new HashMap<>();
@@ -39,11 +39,11 @@ public class AuthenticationService {
     }
 
     /**
-     * @auther Emmanuel Yidana
      * @description: A method to extract user details or claims from a token
-     * @date 28th-04-2025
+     * @auther
      * @param: token
      * @return claims such as email, username,authorities etc
+     * @createdAt 29th, May 2025
      */
     public Claims getClaims(String token) {
         try{
@@ -58,11 +58,11 @@ public class AuthenticationService {
     }
 
     /**
-     * @auther Emmanuel Yidana
      * @description: A method to extract username from a token
-     * @date 28th-04-2025
+     * @auther
      * @param: token
      * @return username
+     * @createdAt 29th, May 2025
      */
     public String extractUsername(String token){
         Claims claims = getClaims(token);
@@ -75,11 +75,11 @@ public class AuthenticationService {
     }
 
     /**
-     * @auther Emmanuel Yidana
      * @description: A method to check if token is valid
-     * @date 28th-04-2025
+     * @auther
      * @param: token
      * @return boolean
+     * @createdAt 29th, May 2025
      */
     public boolean  isTokenValid(String token){
         Claims claims = getClaims(token);
@@ -87,10 +87,10 @@ public class AuthenticationService {
     }
 
     /**
-     * @auther Emmanuel Yidana
      * @description: A method to generate a secret key for token generation and verification
-     * @date 28th-04-2025
+     * @auther
      * @return SecretKey
+     * @createdAt 29th, May 2025
      */
     private SecretKey secretKey(){
         byte[] decodedKey = Base64.getDecoder().decode(SECRET);

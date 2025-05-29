@@ -33,7 +33,7 @@ public class Config {
         return httpSecurity.authorizeHttpRequests((auth->{
                     auth
                             .requestMatchers("/api/v1/users/authenticate").permitAll()
-                            .anyRequest().authenticated();
+                            .anyRequest().permitAll();
                 }))
                 .cors((AbstractHttpConfigurer::disable))
                 .csrf((AbstractHttpConfigurer::disable))

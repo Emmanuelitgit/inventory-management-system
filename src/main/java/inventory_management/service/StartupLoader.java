@@ -18,11 +18,15 @@ public class StartupLoader implements CommandLineRunner {
         this.issueItemService = issueItemService;
     }
 
+    /**
+     *  This is used to load all items in to the application's memory via the data structures when the application load up
+     * @param args
+     */
     @Override
     public void run(String... args) {
         inventoryService.getItems(false);
         vendorService.getVendors(false);
         issueItemService.getAllIssuedItems(false);
-        System.out.println("✅ Items loaded into data structures at startup.");
+        System.out.println("Items loaded into data structures at startup.");
     }
 }

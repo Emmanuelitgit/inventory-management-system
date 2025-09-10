@@ -162,7 +162,7 @@ public class InventoryService {
                     list.add(payload);
                     break;
                 default:
-                    System.out.println("⚠️ Unknown category: " + category);
+                    System.out.println("Unknown category: " + category);
             }
         }
 
@@ -187,7 +187,7 @@ public class InventoryService {
 
         // getting category name given the id
         ItemCategory category = itemCategoryRepo.findById(itemCategory.getId())
-                .orElseThrow(()-> new NotFoundException("category record not found"));
+                .orElseThrow(()-> new NotFoundException("Category record not found"));
 
         Inventory removedItem = null;
 
@@ -257,7 +257,9 @@ public class InventoryService {
         refreshMemoryStructures();
     }
 
-    // a helper method for refreshing data in the data structures with the updated data
+    /**
+     * a helper method for refreshing data in the data structures with the updated data
+     */
     public void refreshMemoryStructures() {
         List<Inventory> inventoryList = inventoryRepo.findAll();
 
@@ -306,7 +308,7 @@ public class InventoryService {
                     list.add(payload);
                     break;
                 default:
-                    System.out.println("⚠️ Unknown category: " + category);
+                    System.out.println("Unknown category: " + category);
             }
         }
     }
